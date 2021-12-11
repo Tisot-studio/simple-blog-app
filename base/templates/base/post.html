@@ -1,0 +1,38 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+
+<div class="post-page">
+
+
+    <div class="post-container">
+        <div class="post-title-and-created-container">
+            <div>
+                {{post.title}}
+            </div>
+            <div>
+                {{post.created}}
+            </div>
+        </div>
+            <div class="post-content">
+                {{post.content}}
+            </div>
+    </div>
+    {% if user.is_authenticated %}
+    <form action="{% url 'base:read-post-view' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name='post_id' value="{{post.id}}" >
+        {% if user not in post.read.all %}
+        <button type="submit" style="background: rgb(68, 201, 68); color: white;" class="post-read-btn" > Отметить как прочитанный </button>
+        {% else %}
+        <div> Пост прочитан </div>
+
+        {% endif %}
+
+    </form>
+ {% endif %}
+
+</div>
+
+{% endblock content %}

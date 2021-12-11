@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+<div class="new-post-page" >
+
+    <h2 class="new-post-header"> Создай новый пост! </h2>
+
+    <form action="{% url 'base:new_post' %}" method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit"> Опубликовать </button>
+    </form>
+
+
+</div>
+{% endblock content %}

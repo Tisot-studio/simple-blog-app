@@ -1,0 +1,21 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<h1> Блоги!</h1>
+
+<div class="blogs-list-container">
+
+{% for profile in profiles %}
+    <div class="blogs-wraper">
+        <div>
+            {{profile}}
+        </div>
+        <a href="{% url 'base:profile-detail-view' profile.pk %}" class="blog-detail-link" > Смотреть блог </a>
+    </div>
+
+{% endfor %}
+</div>
+
+
+{% endblock content %}

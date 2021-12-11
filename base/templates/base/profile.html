@@ -1,0 +1,58 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+<div class="profile-page">
+
+    <div class="my-following">
+        <h3> Мои подписки: </h3>
+        <div>
+            {% for p in profile.following.all %}
+                <div style="margin: 5px 0;">
+                    {{p}}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="my-feed">
+        {% for post in posts %}
+                    <div class="post-container">
+                        <h2 class="post-author"> Автор блога: {{post.author}} </h2>
+                        <div class="post-title-and-created-container">
+                            <div>
+                              Заголовок: {{post.title}}
+                            </div>
+                            <div>
+                               Создан: {{post.created}}
+                            </div>
+                        </div>
+                            <div class="post-content">
+                                {{ post.content }}
+                            </div>
+
+                        <span class="post-link-and-read-btn-wraper">
+
+                                <a href="{% url 'base:post-detail-view' post.pk %}" class="post-detail-link" > Читать </a>
+
+                            <div class="read-btn-container">
+                                <form action="{% url 'base:read-post-view' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name='post_id' value="{{post.id}}" >
+                                    {% if user not in post.read.all %}
+                                    <button type="submit"  class="prof-post-read-btn" > Отметить как прочитанный </button>
+                                    {% else %}
+                                    <div> Пост прочитан </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </span>
+                    </div>
+            {% endfor %}
+    </div>
+
+    <div class="create-new-post-btn">
+        <a href="{% url 'base:new_post' %}"> Create new post </a>
+    </div>
+</div>
+{% endblock content %}

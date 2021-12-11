@@ -1,0 +1,52 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="blog-detail-page">
+
+    <div class="blog-header-container">
+        <div class="blog-name">
+          Автор блога: {{object}}
+        </div>
+        <div class="follow-unfollow-button-container">
+        {% if follow %}
+            <form action="{% url 'base:follow-unfollow-view' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name='profile_pk' value="{{object.pk}}" >
+                <button type="submit" style="background: rgb(120, 142, 241); color: white;" class="fl-unfl-btn"> Отписаться </button>
+            </form>
+            {% else %}
+            <form action="{% url 'base:follow-unfollow-view' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name='profile_pk' value="{{object.pk}}" >
+                <button  type="submit" style="background: rgb(68, 201, 68); color: white;" class="fl-unfl-btn"> Подписаться </button>
+            </form>
+
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="posts-list">
+        {% for post in object.profiles_posts %}
+
+        <div class="post-container">
+            <div class="post-title-and-created-container">
+                <div>
+                    {{post.title}}
+                </div>
+                <div>
+                    {{post.created}}
+                </div>
+            </div>
+                <div class="post-content">
+                    {{ post.content }}
+                </div>
+            <a href="{% url 'base:post-detail-view' post.pk %}" class="post-detail-link" > Читать </a>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock content %}
