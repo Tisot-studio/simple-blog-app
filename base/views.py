@@ -4,12 +4,13 @@ from django.views.generic import ListView, DetailView
 from itertools import chain
 from .forms import PostForm
 
+
+# Домашняя страница
 def index(request):
 	return render(request, 'base/index.html')
 
 
-
-
+# Мой профиль
 def my_profile(request):
     user = Profile.objects.get(user=request.user)
     following = user.following.all()
@@ -17,6 +18,7 @@ def my_profile(request):
     return render(request, 'base/profile.html', context)
 
 
+# Список блогов
 class ProfileListView(ListView):
     model = Profile
     template_name = 'base/main.html'
@@ -25,7 +27,8 @@ class ProfileListView(ListView):
     def get_queryset(self):
         return Profile.objects.all().exclude(user=self.request.user)
     
-    
+ 
+# Просмотр блога
 class ProfileDetailView(DetailView):
     model = Profile
     template_name = 'base/detail.html'
@@ -46,8 +49,9 @@ class ProfileDetailView(DetailView):
         context = {'follow': follow,
                    'object': view_profile}
         return context
-		
-    
+
+
+ # Кнопка подписки/отписки на блог  
 def follow_unfollow_profile(request):
     if request.method == "POST":
         my_profile = Profile.objects.get(user = request.user)
@@ -64,7 +68,7 @@ def follow_unfollow_profile(request):
         if obj.user in my_profile.following.all():
             my_profile.following.remove(obj.user)
             
-            # При отписке будет удалять отметка о прочитанности поста, автором которго является обьект
+            # При отписке будет удаляться отметка о прочитанности поста, автором которого является обьект
             for p in obj_posts:
                 p.read.remove(request.user)
         else:
@@ -73,11 +77,12 @@ def follow_unfollow_profile(request):
     return redirect('base:blogs-list-view')
 
 
+# Моя лента с постами
 def posts_of_following_profiles(request):
     profile = Profile.objects.get(user=request.user)
     users = [user for user in profile.following.all()]
     
-    # Создаю пустой список, куда буду добавлять посты тех на кого я подписан и свои посты, это моя лента
+    # Создаю пустой список, куда буду добавлять посты тех на кого я подписан и свои посты (по необходимости), это моя лента
     posts = []
     qs = None
     
@@ -86,7 +91,7 @@ def posts_of_following_profiles(request):
         p_posts = p.post_set.all()
         posts.append(p_posts)
     
-    # добавляю в список постов свои посты
+    # Так можно добавить в список свои посты и отобразить например на отдельной странице. Сейчас будет отобрадаться только лента с постами интеерсных мне блогов.
     # my_posts = profile.profiles_posts()
     # posts.append(my_posts) 
     
@@ -95,8 +100,7 @@ def posts_of_following_profiles(request):
     return render(request, 'base/profile.html', {'profile':profile, 'posts': qs})
 
 
-
-
+# Создаем пост
 def new_post(request):
     if request.method != 'POST':
         form = PostForm()
@@ -111,13 +115,14 @@ def new_post(request):
     return render(request, 'base/new_post.html', {'form': form})
 
 
-
+# Получаем нужный пост
 def get_post(request, pk):
     post = Post.objects.get(id=pk)
     print(post.content)
     return render(request, 'base/post.html', {'post': post})
 
 
+# Пометка о прочитанном посте
 def read_post(request):
     user = request.user
     if request.method == 'POST':
